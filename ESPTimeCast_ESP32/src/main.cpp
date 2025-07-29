@@ -9,8 +9,9 @@
 #include <SPI.h>
 #include <ESPAsyncWebServer.h>
 #include <DNSServer.h>
-#include <sntp.h>
+#include <esp_sntp.h>
 #include <time.h>
+#include <HardwareSerial.h>
 
 #include "mfactoryfont.h"  // Custom font
 #include "tz_lookup.h"     // Timezone lookup, do not duplicate mapping here!
@@ -18,9 +19,9 @@
 
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
 #define MAX_DEVICES 4
-#define CLK_PIN 9
-#define CS_PIN 11
-#define DATA_PIN 12
+#define CLK_PIN 7
+#define CS_PIN 6
+#define DATA_PIN 5
 
 MD_Parola P = MD_Parola(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
 AsyncWebServer server(80);
@@ -128,6 +129,9 @@ bool descScrolling = false;
 const unsigned long descriptionDuration = 3000;    // 3s for short text
 static unsigned long descScrollEndTime = 0;        // for post-scroll delay (re-used for scroll timing)
 const unsigned long descriptionScrollPause = 300;  // 300ms pause after scroll
+
+// Forward declarations
+void advanceDisplayMode();
 
 // Scroll flipped
 textEffect_t getEffectiveScrollDirection(textEffect_t desiredDirection, bool isFlipped) {
